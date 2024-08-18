@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Site BuildName="Win32-mingw32-make"
+	BuildStamp="20240817-0807-Experimental"
+	Name="Legion-Rene"
+	Generator="ctest-3.30.2"
+	CompilerName="C:/msys64/ucrt64/bin/g++.exe"
+	CompilerVersion="13.2.0"
+	OSName="Windows"
+	Hostname="Legion-Rene"
+	OSRelease=" Personal"
+	OSVersion=" (Build 22631)"
+	OSPlatform="AMD64"
+	Is64Bits="1"
+	VendorString="GenuineIntel"
+	VendorID="Intel Corporation"
+	FamilyID="6"
+	ModelID="13"
+	ProcessorCacheSize="-1"
+	NumberOfLogicalCPU="16"
+	NumberOfPhysicalCPU="8"
+	TotalVirtualMemory="40795"
+	TotalPhysicalMemory="16219"
+	LogicalProcessorsPerPhysical="2"
+	ProcessorClockFrequency="2304"
+	>
+	<Testing>
+		<StartDateTime>Aug 17 22:20 Mitteleurop[NON-UTF-8-BYTE-0xE4]ische Sommerzeit</StartDateTime>
+		<StartTestTime>1723926059</StartTestTime>
+		<TestList/>
+		<EndDateTime>Aug 17 22:20 Mitteleurop[NON-UTF-8-BYTE-0xE4]ische Sommerzeit</EndDateTime>
+		<EndTestTime>1723926059</EndTestTime>
+		<ElapsedMinutes>0</ElapsedMinutes>
+	</Testing>
+</Site>
