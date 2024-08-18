@@ -12,9 +12,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: setup
+      run: |
+       sudo apt-get update
+       sudo apt-get install cmake g++ libgtest-dev make libssl-dev
+       sudo apt-get install redis valgrind
     - uses: actions/checkout@v4
-    - name: configure
-      run: ./configure
     - name: make
       run: make
     - name: make check
