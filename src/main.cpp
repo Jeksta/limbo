@@ -10,11 +10,8 @@
 
 int main(int argc, char *argv[])
 {
-    // if (argc == 1)
-    // {
-    //     scanner::run_prompt();
-    // }
-
-    scanner::run("4!=4");
-    scanner::run("4==4");
+    if (argc == 1)
+    {
+        scanner::run_prompt();
+    }
 }
