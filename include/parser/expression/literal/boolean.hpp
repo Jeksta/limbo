@@ -4,10 +4,10 @@
 
 namespace parser
 {
-    struct integer : public variant
+    struct boolean : public variant
     {
-        integer(bool value);
-        ~integer();
+        boolean(bool value);
+        ~boolean();
 
         parser::any accept(const interpreter::visitor *visitor) const;
         std::string to_string() const;

@@ -1,22 +1,22 @@
-#include "bool.hpp"
+#include "boolean.hpp"
 
-parser::bool::
-    bool(bool value)
+parser::boolean::
+    boolean(bool value)
     : variant(value)
 {
 }
-parser::bool::
-    ~bool()
+parser::boolean::
+    ~boolean()
 {
 }
 
-parser::any parser::bool::
+parser::any parser::boolean::
     accept(const interpreter::visitor *visitor) const
 {
-    return visitor->visit_integer(this);
+    throw std::not_implemented();
 }
 
-std::string parser::bool::
+std::string parser::boolean::
     to_string() const
 {
     int v = std::get<bool>(value);
