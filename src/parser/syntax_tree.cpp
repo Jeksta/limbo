@@ -96,20 +96,20 @@ const lexer::token &parser::syntax_tree::
     return tokens.at(current);
 }
 
-parser::unique_expr parser::syntax_tree::
-    get_binary(std::function<parser::unique_expr()> get_expr,
-               const lexer::tt_vec &comperator)
-{
-    parser::unique_expr expr = get_expr();
-    while (this->match(comperator))
-    {
-        lexer::token op = this->previouse();
-        parser::unique_expr right = get_expr();
-        expr = std::make_unique<parser::binary_expression>(std::move(expr), op, std::move(right));
-    }
+// parser::unique_expr parser::syntax_tree::
+//     get_binary(std::function<parser::unique_expr()> get_expr,
+//                const lexer::tt_vec &comperator)
+// {
+//     parser::unique_expr expr = get_expr();
+//     while (this->match(comperator))
+//     {
+//         lexer::token op = this->previouse();
+//         parser::unique_expr right = get_expr();
+//         expr = std::make_unique<parser::binary_expression>(std::move(expr), op, std::move(right));
+//     }
 
-    return std::move(expr);
-}
+//     return std::move(expr);
+// }
 
 parser::unique_expr parser::syntax_tree::
     get_primary()
@@ -129,8 +129,13 @@ parser::unique_expr parser::syntax_tree::
             lexer::True,
         }))
     {
-        // TODO boolsche expression anlegen
-        // return std::make_unique<parser::bool>(this->previouse());
+        switch (this->previouse().type)
+        {
+        case lexer::True:
+            return std::make_unique<parser::boolean>(true);
+        case lexer::False:
+            return std::make_unique<parser::boolean>(false);
+        }
     }
 
     if (this->match({lexer::OpenRoundBracket}))
@@ -187,8 +192,10 @@ parser::unique_expr parser::syntax_tree::
     get_comparison()
 {
     lexer::tt_vec comperator({
-        lexer::ExclamationMarkEqual,
-        lexer::EqualEqual,
+        lexer::GreaterThan,
+        lexer::GreaterThanEqual,
+        lexer::LessThan,
+        lexer::LessThanEqual,
     });
     auto bind = std::bind(&parser::syntax_tree::get_term, this);
     return this->get_binary(bind, comperator);
@@ -198,13 +205,11 @@ parser::unique_expr parser::syntax_tree::
     get_equality()
 {
     lexer::tt_vec comperator({
-        lexer::GreaterThan,
-        lexer::GreaterThanEqual,
-        lexer::LessThan,
-        lexer::LessThanEqual,
+        lexer::ExclamationMarkEqual,
+        lexer::EqualEqual,
     });
     auto bind = std::bind(&parser::syntax_tree::get_comparison, this);
-    return this->get_binary(bind, comperator);
+    return this->get_binary<parser::equality_expression>(bind, comperator);
 }
 
 parser::unique_expr parser::syntax_tree::

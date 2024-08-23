@@ -10,6 +10,7 @@
 #include "expression.hpp"
 #include "literal.hpp"
 #include "integer.hpp"
+#include "boolean.hpp"
 #include "variant.hpp"
 #include "unary_expression.hpp"
 #include "binary_expression.hpp"
@@ -41,8 +42,22 @@ namespace parser
         unique_expr get_primary();
         unique_expr get_unary();
         // binary rules
+        // unique_expr get_binary(std::function<unique_expr()> get_expr,
+        //                        const lexer::tt_vec &comperator);
+        template<typename T = binary_expression>
         unique_expr get_binary(std::function<unique_expr()> get_expr,
-                               const lexer::tt_vec &comperator);
+                       const lexer::tt_vec &comperator)
+        {
+            unique_expr expr = get_expr();
+            while (this->match(comperator))
+            {
+                lexer::token op = this->previouse();
+                unique_expr right = get_expr();
+                expr = std::make_unique<T>(std::move(expr), op, std::move(right));
+            }
+
+            return std::move(expr);
+        }
         unique_expr get_factor();
         unique_expr get_term();
         unique_expr get_comparison();
