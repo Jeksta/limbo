@@ -14,7 +14,6 @@ namespace parser
     class expression
         : public interpreter::interpretable
     {
-
     public:
         virtual ~expression() {}
 

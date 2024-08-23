@@ -16,7 +16,7 @@ parser::binary_expression::
 parser::any parser::binary_expression::
     accept(const interpreter::visitor *visitor) const
 {
-    return visitor->visit_binary_expression(this);
+    return visitor->visit(this);
 }
 
 std::string parser::binary_expression::

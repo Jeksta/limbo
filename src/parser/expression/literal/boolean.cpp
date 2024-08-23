@@ -13,7 +13,7 @@ parser::boolean::
 parser::any parser::boolean::
     accept(const interpreter::visitor *visitor) const
 {
-    throw std::not_implemented();
+    return visitor->visit(this);
 }
 
 std::string parser::boolean::
