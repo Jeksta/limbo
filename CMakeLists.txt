@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-set(project_name limbo)
+set(project_name rumba)
 
 project(${project_name} 
 VERSION 0.1.0 

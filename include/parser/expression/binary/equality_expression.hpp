@@ -9,16 +9,11 @@ namespace parser
     {
         equality_expression(std::unique_ptr<expression> left,
                             lexer::token equality_operator,
-                            std::unique_ptr<expression> right)
-            : binary_expression(std::move(left), equality_operator, std::move(right))
-        {
-        }
+                            std::unique_ptr<expression> right);
         ~equality_expression();
 
-        parser::any accept(const interpreter::visitor *visitor) const
-        {
-            return visitor->visit_equality_expression(this);
-        }
+        parser::any accept(const interpreter::visitor *visitor) const;
+        std::string to_string() const;
     };
 
 } // namespace parser

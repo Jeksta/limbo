@@ -1,5 +1,6 @@
 #include "interpreter.hpp"
 #include "integer.hpp"
+#include "boolean.hpp"
 #include "binary_expression.hpp"
 #include "equality_expression.hpp"
 
@@ -14,6 +15,22 @@ interpreter::interpreter::
 {
 }
 
+bool interpreter::interpreter::
+    is_truthy(parser::any value)
+{
+    return std::visit(overload{
+                          [](bool value) -> bool
+                          {
+                              return value;
+                          },
+                          [](int value) -> bool
+                          {
+                              return value == 0 ? false : true;
+                          },
+                      },
+                      value);
+}
+
 parser::any interpreter::interpreter::
     evaluate(const parser::expression *expr) const
 {
@@ -21,29 +38,29 @@ parser::any interpreter::interpreter::
 }
 
 parser::any interpreter::interpreter::
-    visit_integer(const parser::integer *integer) const
+    visit(const parser::integer *integer) const
 {
     return integer->value;
 }
 
 parser::any interpreter::interpreter::
-    visit_binary_expression(const parser::binary_expression *expr) const
+    visit(const parser::boolean *boolean) const
 {
-    parser::any left(this->evaluate(expr->left.get()));
-    parser::any right(this->evaluate(expr->right.get()));
+    return boolean->value;
+}
 
-    switch (expr->binary_operator.type)
+parser::any interpreter::interpreter::
+    visit(const parser::binary_expression *binary) const
+{
+    parser::any left(this->evaluate(binary->left.get()));
+    parser::any right(this->evaluate(binary->right.get()));
+
+    switch (binary->binary_operator.type)
     {
     case lexer::EqualEqual:
-    {
         return left == right;
-    }
-    break;
     case lexer::ExclamationMarkEqual:
-    {
         return left != right;
-    }
-    break;
 
     default:
         throw parser::parser_error();
@@ -51,9 +68,39 @@ parser::any interpreter::interpreter::
 }
 
 parser::any interpreter::interpreter::
-    visit_equality_expression(const parser::equality_expression *expr) const
+    visit(const parser::equality_expression *equal) const
 {
-    throw std::not_implemented();
+    parser::any left(this->evaluate(equal->left.get()));
+    parser::any right(this->evaluate(equal->right.get()));
+
+    return std::visit(overload{
+                   [equal](bool left, bool right)
+                   {
+                       equality<bool> eq(left, right);
+                       return eq.resolve(equal->binary_operator.type);
+                   },
+                   [equal](int left, bool right)
+                   {
+                       equality<bool> eq(
+                           interpreter::interpreter::is_truthy(left),
+                           right);
+                       return eq.resolve(equal->binary_operator.type);
+                   },
+                   [equal](bool left, int right)
+                   {
+                       equality<bool> eq(
+                           left,
+                           interpreter::interpreter::is_truthy(right));
+                       return eq.resolve(equal->binary_operator.type);
+                   },
+                   [equal](int left, int right)
+                   {
+                       equality<int> eq(left, right);
+                       return eq.resolve(equal->binary_operator.type);
+                   },
+               },
+               left, right);
+
 }
 
 parser::any interpreter::interpreter::

@@ -13,7 +13,7 @@ parser::integer::
 parser::any parser::integer::
     accept(const interpreter::visitor *visitor) const
 {
-    return visitor->visit_integer(this);
+    return visitor->visit(this);
 }
 
 std::string parser::integer::
