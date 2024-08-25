@@ -39,6 +39,7 @@ namespace parser
 
         // rules
         unique_expr get_numeric();
+        unique_expr get_call();
         unique_expr get_primary();
         unique_expr get_unary();
         // binary rules
@@ -61,7 +62,6 @@ namespace parser
         unique_expr get_comparison();
         unique_expr get_equality();
 
-        unique_expr get_call();
         unique_expr get_expression();
 
     public:

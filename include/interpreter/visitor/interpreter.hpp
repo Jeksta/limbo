@@ -14,22 +14,16 @@ namespace parser
 
 #include <memory>
 #include <stack>
-#include "any.hpp"
+#include "stdlib.hpp"
+#include "expression_visitor.hpp"
 #include "token.hpp"
 #include "parser_error.hpp"
 
 namespace interpreter
 {
-    class visitor
-    {
-    public:
-        virtual parser::any visit(const parser::variant *integer) const = 0;
-        virtual parser::any visit(const parser::binary_expression *binary) const = 0;
-        virtual parser::any visit(const parser::equality_expression *equal) const = 0;
-        virtual parser::any visit(const parser::call_expression *call) const = 0;
-    };
-
-    class interpreter : public visitor
+    
+    class interpreter
+        : public expression_visitor
     {
         std::unique_ptr<std::stack<int>> memory;
 
@@ -46,12 +40,6 @@ namespace interpreter
         parser::any visit(const parser::call_expression *call) const;
 
         parser::any interpret(const parser::expression *expr) const;
-    };
-
-    class interpretable
-    {
-    public:
-        virtual parser::any accept(const visitor *visitor) const = 0;
     };
 
 } // namespace interpreter

@@ -17,7 +17,10 @@ namespace lexer
         // methods
         {"func", Function},
         {"type_of", TypeOf},
-        {"int", Integer},
+        {"bool", Bool},
+        {"int", Int},
+        {"double", Double},
+        {"string", String},
     };
 
     const static std::unordered_map<std::string, token_type> literal_divider_map{
