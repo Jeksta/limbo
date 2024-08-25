@@ -17,7 +17,7 @@ namespace parser
                           unique_expr right);
         ~binary_expression();
 
-        parser::any accept(const interpreter::visitor *visitor) const;
+        parser::any accept(const interpreter::expression_visitor *visitor) const;
         std::string to_string() const;
     };
 } // namespace parser

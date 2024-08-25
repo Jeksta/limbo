@@ -37,7 +37,7 @@ namespace parser
         variant(any value);
         ~variant();
 
-        parser::any accept(const interpreter::visitor *visitor) const;
+        parser::any accept(const interpreter::expression_visitor *visitor) const;
         std::string to_string() const;
     };
 

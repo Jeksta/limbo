@@ -72,8 +72,11 @@ namespace lexer
         Return,
 
         Function,
-        Integer,
         TypeOf,
+        Bool,
+        Int,
+        Double,
+        String,
     };
 
     struct token

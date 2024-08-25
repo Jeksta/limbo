@@ -12,7 +12,7 @@ parser::equality_expression::
     ~equality_expression() {}
 
 parser::any parser::equality_expression::
-    accept(const interpreter::visitor *visitor) const
+    accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);
 }
