@@ -7,14 +7,17 @@
 namespace lexer
 {
     const static std::unordered_map<std::string, token_type> keyword_token_map{
+        
         // Keywords
         {"true", True},
         {"false", False},
         {"if", Condition},
-
-        {"func", Function},
-        {"int", Integer},
         {"return", Return},
+
+        // methods
+        {"func", Function},
+        {"type_of", TypeOf},
+        {"int", Integer},
     };
 
     const static std::unordered_map<std::string, token_type> literal_divider_map{
@@ -69,5 +72,5 @@ namespace lexer
 
     constexpr std::regex_constants::syntax_option_type regex_options(std::regex_constants::optimize);
     const std::regex identifier_regex("([_a-zA-Z][_a-zA-Z0-9]{0,30})", regex_options);
-    const std::regex literal_divider_regex("([!\\<\\>\\&*/\\+\\-\\|=]{1,2}|[\\(\\)\\[\\]%:]|[^!\\(\\)\\[\\]=%\\&*/\\+\\-\\|\\<\\>:]+)", regex_options);
+    const std::regex literal_divider_regex("([!\\<\\>\\&*/\\+\\-\\|=]{1,2}|[\\(\\)\\[\\]%:.]|[^!\\(\\)\\[\\]=%\\&*/\\+\\-\\|\\<\\>:.]+)", regex_options);
 }
