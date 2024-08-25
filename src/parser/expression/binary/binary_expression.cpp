@@ -27,9 +27,9 @@ std::string parser::binary_expression::
 
     std::vector<std::string> str({
         "binary",
-        right_str,
-        binary_operator.literal,
         left_str,
+        binary_operator.literal,
+        right_str,
     });
     return std::parenthesize(str, " ", std::bracket::Square);
 }

@@ -1,8 +1,8 @@
 #include "interpreter.hpp"
-#include "integer.hpp"
-#include "boolean.hpp"
+#include "variant.hpp"
 #include "binary_expression.hpp"
 #include "equality_expression.hpp"
+#include "call_expression.hpp"
 
 interpreter::interpreter::
     interpreter()
@@ -15,22 +15,6 @@ interpreter::interpreter::
 {
 }
 
-bool interpreter::interpreter::
-    is_truthy(parser::any value)
-{
-    return std::visit(overload{
-                          [](bool value) -> bool
-                          {
-                              return value;
-                          },
-                          [](int value) -> bool
-                          {
-                              return value == 0 ? false : true;
-                          },
-                      },
-                      value);
-}
-
 parser::any interpreter::interpreter::
     evaluate(const parser::expression *expr) const
 {
@@ -38,15 +22,9 @@ parser::any interpreter::interpreter::
 }
 
 parser::any interpreter::interpreter::
-    visit(const parser::integer *integer) const
+    visit(const parser::variant *variant) const
 {
-    return integer->value;
-}
-
-parser::any interpreter::interpreter::
-    visit(const parser::boolean *boolean) const
-{
-    return boolean->value;
+    return variant->value;
 }
 
 parser::any interpreter::interpreter::
@@ -57,10 +35,8 @@ parser::any interpreter::interpreter::
 
     switch (binary->binary_operator.type)
     {
-    case lexer::EqualEqual:
-        return left == right;
-    case lexer::ExclamationMarkEqual:
-        return left != right;
+    case lexer::GreaterThan:
+        return left > right;
 
     default:
         throw parser::parser_error();
@@ -73,34 +49,75 @@ parser::any interpreter::interpreter::
     parser::any left(this->evaluate(equal->left.get()));
     parser::any right(this->evaluate(equal->right.get()));
 
-    return std::visit(overload{
-                   [equal](bool left, bool right)
-                   {
-                       equality<bool> eq(left, right);
-                       return eq.resolve(equal->binary_operator.type);
-                   },
-                   [equal](int left, bool right)
-                   {
-                       equality<bool> eq(
-                           interpreter::interpreter::is_truthy(left),
-                           right);
-                       return eq.resolve(equal->binary_operator.type);
-                   },
-                   [equal](bool left, int right)
-                   {
-                       equality<bool> eq(
-                           left,
-                           interpreter::interpreter::is_truthy(right));
-                       return eq.resolve(equal->binary_operator.type);
-                   },
-                   [equal](int left, int right)
-                   {
-                       equality<int> eq(left, right);
-                       return eq.resolve(equal->binary_operator.type);
-                   },
-               },
-               left, right);
+    const lexer::token_type &op = equal->binary_operator.type;
+    switch (op)
+    {
+    case lexer::EqualEqual:
+        return left == right;
+    case lexer::ExclamationMarkEqual:
+        return left != right;
 
+    default:
+        throw parser::parser_error();
+    }
+
+    // return std::visit(overload{
+    //                       [op](bool left, bool right)
+    //                       {
+    //                           return equals<bool>(left, right, op);
+    //                       },
+    //                       [op](int left, bool right)
+    //                       {
+    //                           bool truthy = interpreter::interpreter::is_truthy(left);
+    //                           return equals<bool>(truthy, right, op);
+    //                       },
+    //                       [op](bool left, int right)
+    //                       {
+    //                           bool truthy = interpreter::interpreter::is_truthy(right);
+    //                           return equals<bool>(truthy, truthy, op);
+    //                       },
+    //                       [op](int left, int right)
+    //                       {
+    //                           return equals<int>(left, right, op);
+    //                       },
+    //                       [op](bool left, double right)
+    //                       {
+    //                           bool truthy = interpreter::interpreter::is_truthy(right);
+    //                           return equals<bool>(left, truthy, op);
+    //                       },
+    //                       [op](double left, bool right)
+    //                       {
+    //                           bool truthy = interpreter::interpreter::is_truthy(left);
+    //                           return equals<bool>(truthy, right, op);
+    //                       },
+    //                       [op](int left, double right)
+    //                       {
+    //                           return equals<double>(1.0 * left, right, op);
+    //                       },
+    //                       [op](double left, int right)
+    //                       {
+    //                           return equals<double>(left, 1.0 * right, op);
+    //                       },
+    //                       [op](double left, double right)
+    //                       {
+    //                           return equals<double>(left, right, op);
+    //                       },
+    //                   },
+    //                   left, right);
+}
+
+parser::any interpreter::interpreter::
+    visit(const parser::call_expression *call) const
+{
+    parser::any right(this->evaluate(call->parameter.get()));
+
+    const lexer::token_type &id_type = call->identifier.type;
+    switch (id_type)
+    {
+    case lexer::TypeOf:
+        return parser::type_of(right);
+    }
+    throw parser::parser_error();
 }
 
 parser::any interpreter::interpreter::

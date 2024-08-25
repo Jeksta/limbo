@@ -8,13 +8,13 @@ namespace parser
     struct binary_expression
         : public expression
     {
-        std::unique_ptr<expression> left;
+        unique_expr left;
         lexer::token binary_operator;
-        std::unique_ptr<expression> right;
+        unique_expr right;
 
-        binary_expression(std::unique_ptr<expression> left,
+        binary_expression(unique_expr left,
                           lexer::token binary_operator,
-                          std::unique_ptr<expression> right);
+                          unique_expr right);
         ~binary_expression();
 
         parser::any accept(const interpreter::visitor *visitor) const;
