@@ -12,7 +12,7 @@ namespace parser
                             parser::unique_expr right);
         ~equality_expression();
 
-        parser::any accept(const interpreter::visitor *visitor) const;
+        parser::any accept(const interpreter::expression_visitor *visitor) const;
         std::string to_string() const;
     };
 

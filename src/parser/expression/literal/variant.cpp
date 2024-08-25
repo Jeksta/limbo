@@ -52,7 +52,7 @@ parser::variant::
 }
 
 parser::any parser::variant::
-    accept(const interpreter::visitor *visitor) const
+    accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);
 }

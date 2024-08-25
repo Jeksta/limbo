@@ -14,7 +14,4 @@ namespace parser
     overload(Ts...) -> overload<Ts...>;
 
     typedef std::variant<int, bool, double, std::string> any;
-
-    bool is_truthy(const any &value);
-    std::string type_of(const any &value);
 } // namespace parser

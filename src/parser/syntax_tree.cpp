@@ -122,14 +122,31 @@ parser::unique_expr parser::syntax_tree::
 }
 
 parser::unique_expr parser::syntax_tree::
+    get_call()
+{
+    lexer::token identifier = this->previouse();
+    if (this->match({lexer::OpenRoundBracket}))
+    {
+        parser::unique_expr expr = this->get_expression();
+        this->consume(lexer::CloseRoundBracket, "call is missing closing brackets");
+        return std::make_unique<parser::call_expression>(identifier, std::move(expr));
+    }
+
+    throw parser::parser_error();
+}
+
+parser::unique_expr parser::syntax_tree::
     get_primary()
 {
+    // int / double
     if (this->match({
             lexer::Number,
         }))
     {
         return this->get_numeric();
     }
+
+    // bool
     if (this->match({
             lexer::False,
             lexer::True,
@@ -144,6 +161,17 @@ parser::unique_expr parser::syntax_tree::
         }
     }
 
+    // calls
+    if (this->match({lexer::TypeOf,
+                     lexer::Bool,
+                     lexer::Int,
+                     lexer::Double,
+                     lexer::String}))
+    {
+        return this->get_call();
+    }
+
+    // grouping
     if (this->match({lexer::OpenRoundBracket}))
     {
         // TODO Grouping
@@ -219,26 +247,9 @@ parser::unique_expr parser::syntax_tree::
 }
 
 parser::unique_expr parser::syntax_tree::
-    get_call()
-{
-    if (this->match({lexer::TypeOf}))
-    {
-        lexer::token identifier = this->previouse();
-        if (this->match({lexer::OpenRoundBracket}))
-        {
-            parser::unique_expr expr = this->get_expression();
-            this->consume(lexer::CloseRoundBracket, "");
-            return std::make_unique<parser::call_expression>(identifier, std::move(expr));
-        }
-    }
-
-    return this->get_equality();
-}
-
-parser::unique_expr parser::syntax_tree::
     get_expression()
 {
-    return this->get_call();
+    return this->get_equality();
 }
 
 void parser::syntax_tree::
