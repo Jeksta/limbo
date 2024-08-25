@@ -7,9 +7,9 @@ namespace parser
     struct equality_expression
         : public binary_expression
     {
-        equality_expression(std::unique_ptr<expression> left,
+        equality_expression(parser::unique_expr left,
                             lexer::token equality_operator,
-                            std::unique_ptr<expression> right);
+                            parser::unique_expr right);
         ~equality_expression();
 
         parser::any accept(const interpreter::visitor *visitor) const;

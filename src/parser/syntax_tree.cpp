@@ -96,20 +96,30 @@ const lexer::token &parser::syntax_tree::
     return tokens.at(current);
 }
 
-// parser::unique_expr parser::syntax_tree::
-//     get_binary(std::function<parser::unique_expr()> get_expr,
-//                const lexer::tt_vec &comperator)
-// {
-//     parser::unique_expr expr = get_expr();
-//     while (this->match(comperator))
-//     {
-//         lexer::token op = this->previouse();
-//         parser::unique_expr right = get_expr();
-//         expr = std::make_unique<parser::binary_expression>(std::move(expr), op, std::move(right));
-//     }
+parser::unique_expr parser::syntax_tree::
+    get_numeric()
+{
+    lexer::token exponent_token(this->previouse());
 
-//     return std::move(expr);
-// }
+    // float
+    if (this->match({lexer::Period}))
+    {
+        std::string significant("0");
+
+        if (this->match({lexer::Number}))
+        {
+            lexer::token mantissa_token(this->previouse());
+            significant = mantissa_token.literal;
+        }
+
+        double value = std::stod(exponent_token.literal + "." + significant);
+
+        return std::make_unique<parser::variant>(value);
+    }
+
+    int exponent = std::stoi(exponent_token.literal);
+    return std::make_unique<parser::variant>(exponent);
+}
 
 parser::unique_expr parser::syntax_tree::
     get_primary()
@@ -118,11 +128,7 @@ parser::unique_expr parser::syntax_tree::
             lexer::Number,
         }))
     {
-        lexer::token prev(this->previouse());
-        int value = std::stoi(prev.literal);
-        // parser::any v = value;
-        // return std::make_unique<parser::variant>(v);
-        return std::make_unique<parser::integer>(value);
+        return this->get_numeric();
     }
     if (this->match({
             lexer::False,
@@ -132,9 +138,9 @@ parser::unique_expr parser::syntax_tree::
         switch (this->previouse().type)
         {
         case lexer::True:
-            return std::make_unique<parser::boolean>(true);
+            return std::make_unique<parser::variant>(true);
         case lexer::False:
-            return std::make_unique<parser::boolean>(false);
+            return std::make_unique<parser::variant>(false);
         }
     }
 
@@ -213,9 +219,26 @@ parser::unique_expr parser::syntax_tree::
 }
 
 parser::unique_expr parser::syntax_tree::
+    get_call()
+{
+    if (this->match({lexer::TypeOf}))
+    {
+        lexer::token identifier = this->previouse();
+        if (this->match({lexer::OpenRoundBracket}))
+        {
+            parser::unique_expr expr = this->get_expression();
+            this->consume(lexer::CloseRoundBracket, "");
+            return std::make_unique<parser::call_expression>(identifier, std::move(expr));
+        }
+    }
+
+    return this->get_equality();
+}
+
+parser::unique_expr parser::syntax_tree::
     get_expression()
 {
-    return std::move(this->get_equality());
+    return this->get_call();
 }
 
 void parser::syntax_tree::
