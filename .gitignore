@@ -34,4 +34,4 @@
 #
 .vscode
 CMakePresets.json
-out
+build

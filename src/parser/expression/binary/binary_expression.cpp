@@ -14,9 +14,9 @@ parser::binary_expression::
 }
 
 parser::any parser::binary_expression::
-    accept(const interpreter::visitor *visitor) const
+    accept(const interpreter::expression_visitor *visitor) const
 {
-    return visitor->visit_binary_expression(this);
+    return visitor->visit(this);
 }
 
 std::string parser::binary_expression::
@@ -27,9 +27,9 @@ std::string parser::binary_expression::
 
     std::vector<std::string> str({
         "binary",
-        right_str,
-        binary_operator.literal,
         left_str,
+        binary_operator.literal,
+        right_str,
     });
     return std::parenthesize(str, " ", std::bracket::Square);
 }

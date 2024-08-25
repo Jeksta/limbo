@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5.0)
 
-set(project_name limbo)
+set(project_name rumba)
 
 project(${project_name} 
 VERSION 0.1.0 
@@ -25,9 +25,12 @@ list(APPEND include_dirs scanner)
 list(APPEND include_dirs lexer)
 list(APPEND include_dirs parser)
 list(APPEND include_dirs parser/expression)
+list(APPEND include_dirs parser/expression/unary)
 list(APPEND include_dirs parser/expression/binary)
 list(APPEND include_dirs parser/expression/literal)
 list(APPEND include_dirs interpreter)
+list(APPEND include_dirs interpreter/logic)
+list(APPEND include_dirs interpreter/visitor)
 
 foreach(dir IN LISTS include_dirs)
     include_dir(${dir})

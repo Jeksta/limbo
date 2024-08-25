@@ -97,42 +97,81 @@ const lexer::token &parser::syntax_tree::
 }
 
 parser::unique_expr parser::syntax_tree::
-    get_binary(std::function<parser::unique_expr()> get_expr,
-               const lexer::tt_vec &comperator)
+    get_numeric()
 {
-    parser::unique_expr expr = get_expr();
-    while (this->match(comperator))
+    lexer::token exponent_token(this->previouse());
+
+    // float
+    if (this->match({lexer::Period}))
     {
-        lexer::token op = this->previouse();
-        parser::unique_expr right = get_expr();
-        expr = std::make_unique<parser::binary_expression>(std::move(expr), op, std::move(right));
+        std::string significant("0");
+
+        if (this->match({lexer::Number}))
+        {
+            lexer::token mantissa_token(this->previouse());
+            significant = mantissa_token.literal;
+        }
+
+        double value = std::stod(exponent_token.literal + "." + significant);
+
+        return std::make_unique<parser::variant>(value);
     }
 
-    return std::move(expr);
+    int exponent = std::stoi(exponent_token.literal);
+    return std::make_unique<parser::variant>(exponent);
+}
+
+parser::unique_expr parser::syntax_tree::
+    get_call()
+{
+    lexer::token identifier = this->previouse();
+    if (this->match({lexer::OpenRoundBracket}))
+    {
+        parser::unique_expr expr = this->get_expression();
+        this->consume(lexer::CloseRoundBracket, "call is missing closing brackets");
+        return std::make_unique<parser::call_expression>(identifier, std::move(expr));
+    }
+
+    throw parser::parser_error();
 }
 
 parser::unique_expr parser::syntax_tree::
     get_primary()
 {
+    // int / double
     if (this->match({
             lexer::Number,
         }))
     {
-        lexer::token prev(this->previouse());
-        int value = std::stoi(prev.literal);
-        // parser::any v = value;
-        // return std::make_unique<parser::variant>(v);
-        return std::make_unique<parser::integer>(value);
+        return this->get_numeric();
     }
+
+    // bool
     if (this->match({
             lexer::False,
             lexer::True,
         }))
     {
-        // TODO boolsche expression anlegen
-        // return std::make_unique<parser::bool>(this->previouse());
+        switch (this->previouse().type)
+        {
+        case lexer::True:
+            return std::make_unique<parser::variant>(true);
+        case lexer::False:
+            return std::make_unique<parser::variant>(false);
+        }
     }
 
+    // calls
+    if (this->match({lexer::TypeOf,
+                     lexer::Bool,
+                     lexer::Int,
+                     lexer::Double,
+                     lexer::String}))
+    {
+        return this->get_call();
+    }
+
+    // grouping
     if (this->match({lexer::OpenRoundBracket}))
     {
         // TODO Grouping
@@ -187,8 +226,10 @@ parser::unique_expr parser::syntax_tree::
     get_comparison()
 {
     lexer::tt_vec comperator({
-        lexer::ExclamationMarkEqual,
-        lexer::EqualEqual,
+        lexer::GreaterThan,
+        lexer::GreaterThanEqual,
+        lexer::LessThan,
+        lexer::LessThanEqual,
     });
     auto bind = std::bind(&parser::syntax_tree::get_term, this);
     return this->get_binary(bind, comperator);
@@ -198,19 +239,17 @@ parser::unique_expr parser::syntax_tree::
     get_equality()
 {
     lexer::tt_vec comperator({
-        lexer::GreaterThan,
-        lexer::GreaterThanEqual,
-        lexer::LessThan,
-        lexer::LessThanEqual,
+        lexer::ExclamationMarkEqual,
+        lexer::EqualEqual,
     });
     auto bind = std::bind(&parser::syntax_tree::get_comparison, this);
-    return this->get_binary(bind, comperator);
+    return this->get_binary<parser::equality_expression>(bind, comperator);
 }
 
 parser::unique_expr parser::syntax_tree::
     get_expression()
 {
-    return std::move(this->get_equality());
+    return this->get_equality();
 }
 
 void parser::syntax_tree::

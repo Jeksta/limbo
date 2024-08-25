@@ -9,11 +9,11 @@
 #include "token.hpp"
 #include "expression.hpp"
 #include "literal.hpp"
-#include "integer.hpp"
 #include "variant.hpp"
 #include "unary_expression.hpp"
 #include "binary_expression.hpp"
 #include "equality_expression.hpp"
+#include "call_expression.hpp"
 
 namespace parser
 {
@@ -38,11 +38,25 @@ namespace parser
         const lexer::token &peek() const;
 
         // rules
+        unique_expr get_numeric();
+        unique_expr get_call();
         unique_expr get_primary();
         unique_expr get_unary();
         // binary rules
+        template<typename T = binary_expression>
         unique_expr get_binary(std::function<unique_expr()> get_expr,
-                               const lexer::tt_vec &comperator);
+                       const lexer::tt_vec &comperator)
+        {
+            unique_expr expr = get_expr();
+            while (this->match(comperator))
+            {
+                lexer::token op = this->previouse();
+                unique_expr right = get_expr();
+                expr = std::make_unique<T>(std::move(expr), op, std::move(right));
+            }
+
+            return std::move(expr);
+        }
         unique_expr get_factor();
         unique_expr get_term();
         unique_expr get_comparison();

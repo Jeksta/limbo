@@ -13,7 +13,7 @@ parser::unary_expression::
 }
 
 parser::any parser::unary_expression::
-    accept(const interpreter::visitor *visitor) const
+    accept(const interpreter::expression_visitor *visitor) const
 {
     throw std::not_implemented();
 }

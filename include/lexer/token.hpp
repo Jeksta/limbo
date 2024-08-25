@@ -69,10 +69,14 @@ namespace lexer
         True,
         False,
         Condition,
+        Return,
 
-        Integer,
         Function,
-        Return
+        TypeOf,
+        Bool,
+        Int,
+        Double,
+        String,
     };
 
     struct token
