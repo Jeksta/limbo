@@ -38,6 +38,15 @@ parser::any interpreter::interpreter::
     case lexer::GreaterThan:
         return left > right;
 
+    case lexer::GreaterThanEqual:
+        return left >= right;
+
+    case lexer::LessThan:
+        return left < right;
+
+    case lexer::LessThanEqual:
+        return left <= right;
+
     default:
         throw parser::parser_error();
     }
