@@ -5,4 +5,10 @@
 namespace interpreter
 {
     bool is_truthy(const parser::any &value);
+
+    template <typename... T>
+    bool greater_than(T... args)
+    {
+        return (... > args);
+    }
 } // namespace interpreter

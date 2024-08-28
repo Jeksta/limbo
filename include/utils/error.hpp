@@ -6,7 +6,21 @@
 
 namespace std
 {
-    class not_implemented : public exception
+    class crash
+        : public exception
+    {
+    protected:
+        std::string message = "crash";
+
+    public:
+        crash();
+        crash(std::string message);
+
+        const char *what() const throw();
+    };
+
+    class not_implemented
+        : public exception
     {
     public:
         const char *what() const throw();

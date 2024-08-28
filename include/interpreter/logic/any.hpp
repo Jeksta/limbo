@@ -10,8 +10,10 @@ namespace parser
     {
         using Ts::operator()...;
     };
+
     template <class... Ts>
     overload(Ts...) -> overload<Ts...>;
 
     typedef std::variant<int, bool, double, std::string> any;
+
 } // namespace parser
