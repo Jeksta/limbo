@@ -5,19 +5,18 @@
 #include <functional>
 #include "any.hpp"
 #include "parser_error.hpp"
-#include "error.hpp"
 #include "token.hpp"
 #include "expression.hpp"
 #include "literal.hpp"
 #include "variant.hpp"
 #include "unary_expression.hpp"
 #include "binary_expression.hpp"
-#include "equality_expression.hpp"
+#include "compare_expression.hpp"
+#include "arithmetic_expression.hpp"
 #include "call_expression.hpp"
 
 namespace parser
 {
-
     class syntax_tree
     {
         const lexer::t_vec tokens;
@@ -43,9 +42,9 @@ namespace parser
         unique_expr get_primary();
         unique_expr get_unary();
         // binary rules
-        template<typename T = binary_expression>
+        template <typename T = binary_expression>
         unique_expr get_binary(std::function<unique_expr()> get_expr,
-                       const lexer::tt_vec &comperator)
+                               const lexer::tt_vec &comperator)
         {
             unique_expr expr = get_expr();
             while (this->match(comperator))

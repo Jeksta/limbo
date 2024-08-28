@@ -1,5 +1,7 @@
 #include "syntax_tree.hpp"
 
+using namespace parser::error;
+
 parser::syntax_tree::
     syntax_tree(const lexer::t_vec &tokens)
     : tokens(tokens)
@@ -81,7 +83,7 @@ const lexer::token &parser::syntax_tree::
         return this->advance();
     }
 
-    throw parser::parser_error();
+    throw parser_crash();
 }
 
 const lexer::token &parser::syntax_tree::
@@ -132,7 +134,7 @@ parser::unique_expr parser::syntax_tree::
         return std::make_unique<parser::call_expression>(identifier, std::move(expr));
     }
 
-    throw parser::parser_error();
+    throw parser_crash();
 }
 
 parser::unique_expr parser::syntax_tree::
@@ -180,7 +182,7 @@ parser::unique_expr parser::syntax_tree::
         // return group expression
     }
 
-    throw parser::parser_error();
+    throw parser_crash();
 }
 
 parser::unique_expr parser::syntax_tree::
@@ -208,7 +210,7 @@ parser::unique_expr parser::syntax_tree::
         lexer::Star,
     });
     auto bind = std::bind(&parser::syntax_tree::get_unary, this);
-    return this->get_binary(bind, comperator);
+    return this->get_binary<parser::arithmetic_expression>(bind, comperator);
 }
 
 parser::unique_expr parser::syntax_tree::
@@ -219,7 +221,7 @@ parser::unique_expr parser::syntax_tree::
         lexer::Plus,
     });
     auto bind = std::bind(&parser::syntax_tree::get_factor, this);
-    return this->get_binary(bind, comperator);
+    return this->get_binary<parser::arithmetic_expression>(bind, comperator);
 }
 
 parser::unique_expr parser::syntax_tree::
@@ -232,7 +234,7 @@ parser::unique_expr parser::syntax_tree::
         lexer::LessThanEqual,
     });
     auto bind = std::bind(&parser::syntax_tree::get_term, this);
-    return this->get_binary(bind, comperator);
+    return this->get_binary<parser::compare_expression>(bind, comperator);
 }
 
 parser::unique_expr parser::syntax_tree::
@@ -243,7 +245,7 @@ parser::unique_expr parser::syntax_tree::
         lexer::EqualEqual,
     });
     auto bind = std::bind(&parser::syntax_tree::get_comparison, this);
-    return this->get_binary<parser::equality_expression>(bind, comperator);
+    return this->get_binary<parser::compare_expression>(bind, comperator);
 }
 
 parser::unique_expr parser::syntax_tree::
@@ -260,7 +262,7 @@ void parser::syntax_tree::
     {
         this->expr = this->get_expression();
     }
-    catch (const parser::parser_error &e)
+    catch (const parser::error::parser_crash &e)
     {
         std::cerr << e.what() << '\n';
     }

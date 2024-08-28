@@ -1,13 +1,15 @@
 #include "interpreter.hpp"
 #include "variant.hpp"
 #include "binary_expression.hpp"
-#include "equality_expression.hpp"
+#include "compare_expression.hpp"
+#include "arithmetic_expression.hpp"
 #include "call_expression.hpp"
+
+using namespace interpreter::error;
 
 interpreter::interpreter::
     interpreter()
 {
-    memory = std::make_unique<std::stack<int>>();
 }
 
 interpreter::interpreter::
@@ -30,67 +32,149 @@ parser::any interpreter::interpreter::
 parser::any interpreter::interpreter::
     visit(const parser::binary_expression *binary) const
 {
-    parser::any left(this->evaluate(binary->left.get()));
-    parser::any right(this->evaluate(binary->right.get()));
-
-    switch (binary->binary_operator.type)
-    {
-    case lexer::GreaterThan:
-        return left > right;
-
-    case lexer::GreaterThanEqual:
-        return left >= right;
-
-    case lexer::LessThan:
-        return left < right;
-
-    case lexer::LessThanEqual:
-        return left <= right;
-
-    default:
-        throw parser::parser_error();
-    }
+    throw error::runtime_crash();
 }
 
 parser::any interpreter::interpreter::
-    visit(const parser::equality_expression *equal) const
+    visit(const parser::arithmetic_expression *arithmetic) const
 {
-    parser::any left(this->evaluate(equal->left.get()));
-    parser::any right(this->evaluate(equal->right.get()));
+    parser::any left(this->evaluate(arithmetic->left.get()));
+    parser::any right(this->evaluate(arithmetic->right.get()));
 
-    const lexer::token_type &op = equal->binary_operator.type;
-    switch (op)
-    {
-    case lexer::EqualEqual:
-        return left == right;
-    case lexer::ExclamationMarkEqual:
-        return left != right;
+    const lexer::token &token = arithmetic->binary_operator;
 
-    default:
-        throw parser::parser_error();
-    }
+    auto overload = parser::overload{
+        [&token](auto &&left, std::string right) -> parser::any
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::string left, auto &&right) -> parser::any
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::string left, std::string right) -> parser::any
+        {
+            switch (token.type)
+            {
+            case lexer::Plus:
+                return left + right;
+
+            default:
+                throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            }
+        },
+        [&token](auto &&left, auto &&right) -> parser::any
+        {
+            switch (token.type)
+            {
+            case lexer::Plus:
+                return left + right;
+            case lexer::Dash:
+                return left - right;
+            case lexer::Star:
+                return left * right;
+            case lexer::Slash:
+            {
+                if (right == 0){
+                    throw arithmetic_crash("dividing my zero");
+                }
+                return left / right;
+            }
+
+            default:
+                throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            }
+        },
+    };
+    return std::visit(overload, left, right);
+}
+
+parser::any interpreter::interpreter::
+    visit(const parser::compare_expression *compare) const
+{
+    parser::any left(this->evaluate(compare->left.get()));
+    parser::any right(this->evaluate(compare->right.get()));
+
+    const lexer::token &token = compare->binary_operator;
+
+    auto overload = parser::overload{
+        [&token](auto &&left, std::string right) -> bool
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::string left, auto &&right) -> bool
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::string left, std::string right) -> bool
+        {
+            switch (token.type)
+            {
+            case lexer::EqualEqual:
+                return left == right;
+
+            case lexer::ExclamationMarkEqual:
+                return left != right;
+
+            default:
+                throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            }
+        },
+        [&token](auto &&left, auto &&right) -> bool
+        {
+            switch (token.type)
+            {
+            case lexer::EqualEqual:
+                return left == right;
+
+            case lexer::ExclamationMarkEqual:
+                return left != right;
+
+            case lexer::GreaterThan:
+                return left > right;
+
+            case lexer::GreaterThanEqual:
+                return left >= right;
+
+            case lexer::LessThan:
+                return left < right;
+
+            case lexer::LessThanEqual:
+                return left <= right;
+
+            default:
+                throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            }
+        },
+    };
+    return std::visit(overload, left, right);
 }
 
 parser::any interpreter::interpreter::
     visit(const parser::call_expression *call) const
 {
-    parser::any right(this->evaluate(call->parameter.get()));
+    parser::any expr(this->evaluate(call->parameter.get()));
 
-    const lexer::token_type &id_type = call->identifier.type;
-    switch (id_type)
+    const lexer::token &id = call->identifier;
+    switch (id.type)
     {
     case lexer::TypeOf:
-        return type_of(right);
+        return type_of(expr);
+
     case lexer::Bool:
-        return bool_of(right);
+        return bool_of(expr);
+
     case lexer::Int:
-        return int_of(right);
+        return int_of(expr);
+
     case lexer::Double:
-        return double_of(right);
+        return double_of(expr);
+
     case lexer::String:
-        return string_of(right);
+        return string_of(expr);
     }
-    throw parser::parser_error();
+
+    throw runtime_crash("unknown call");
 }
 
 parser::any interpreter::interpreter::
