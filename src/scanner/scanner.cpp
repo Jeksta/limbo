@@ -4,6 +4,8 @@ void scanner::run(const std::string &source_code)
 {
     try
     {
+        auto start = std::chrono::high_resolution_clock::now();
+
         std::print_debug_message("source", source_code);
 
         // convert source code into tokens
@@ -16,9 +18,15 @@ void scanner::run(const std::string &source_code)
         tree.parse();
         std::print_debug_message("parser", tree.to_ast());
 
+        // interpret stuff
         interpreter::interpreter interpreter;
         parser::any result(interpreter.interpret(tree.get_tree_root()));
 
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::print_debug_message("profiler", std::to_string(duration.count()) + " μs");
+
+        // print result
         std::string response(std::visit(parser::variant_mapper{}, result));
         std::cout << "> " << response << "\n";
     }
@@ -44,7 +52,6 @@ void scanner::run_prompt()
         {
             break;
         }
-
         scanner::run(source_code);
     }
 }

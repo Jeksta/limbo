@@ -1,30 +1,30 @@
-#include "equality_expression.hpp"
+#include "compare_expression.hpp"
 
-parser::equality_expression::
-    equality_expression(std::unique_ptr<expression> left,
-                        lexer::token equality_operator,
+parser::compare_expression::
+    compare_expression(std::unique_ptr<expression> left,
+                        lexer::token compare_operator,
                         std::unique_ptr<expression> right)
-    : binary_expression(std::move(left), equality_operator, std::move(right))
+    : binary_expression(std::move(left), compare_operator, std::move(right))
 {
 }
 
-parser::equality_expression::
-    ~equality_expression() {}
+parser::compare_expression::
+    ~compare_expression() {}
 
-parser::any parser::equality_expression::
+parser::any parser::compare_expression::
     accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);
 }
 
-std::string parser::equality_expression::
+std::string parser::compare_expression::
     to_string() const
 {
     std::string right_str(right->to_string());
     std::string left_str(left->to_string());
 
     std::vector<std::string> str({
-        "equals",
+        "compare",
         left_str,
         binary_operator.literal,
         right_str,

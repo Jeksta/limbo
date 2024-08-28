@@ -1,5 +1,14 @@
 #include "error.hpp"
 
+std::crash::crash() {}
+std::crash::crash(std::string message) : message(message) {}
+
+const char *std::crash::
+    what() const throw()
+{
+    return message.c_str();
+}
+
 const char *std::not_implemented::
     what() const throw()
 {
