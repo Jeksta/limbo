@@ -76,7 +76,7 @@ parser::any interpreter::interpreter::
             case lexer::Slash:
             {
                 if (right == 0){
-                    throw arithmetic_crash("dividing my zero");
+                    throw arithmetic_crash("dividing by zero");
                 }
                 return left / right;
             }
