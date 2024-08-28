@@ -12,6 +12,8 @@ An interpreter written in C++ im working on in my spare time
 
 ## Implemented operators
 - Equality ( "==" | "!=" )
+- Comparison ( "<" | "<=" | ">" | ">=" )
+- Arithmetic ( "+" | "-" | "*" | "/" )
 
 ## Known Issues 
-- Comparison ( "<" | "<=" | ">" | ">=" ) doing funky stuff
+- Everything else
