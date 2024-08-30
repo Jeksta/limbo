@@ -1,6 +1,7 @@
 #pragma once
 
 #include "error.hpp"
+#include "token.hpp"
 
 namespace lexer::error
 {
@@ -8,6 +9,6 @@ namespace lexer::error
         : public std::crash
     {
     public:
-        invalid_token();
+        invalid_token(const lexer::token &token);
     };
-} // namespace exc
+} // namespace lexer::error

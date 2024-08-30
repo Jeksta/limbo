@@ -161,16 +161,16 @@ parser::any interpreter::interpreter::
     case lexer::TypeOf:
         return type_of(expr);
 
-    case lexer::Bool:
+    case lexer::BoolCast:
         return bool_of(expr);
 
-    case lexer::Int:
+    case lexer::IntCast:
         return int_of(expr);
 
-    case lexer::Double:
+    case lexer::DoubleCast:
         return double_of(expr);
 
-    case lexer::String:
+    case lexer::StringCast:
         return string_of(expr);
     }
 

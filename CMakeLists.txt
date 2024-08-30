@@ -12,6 +12,7 @@ set(includes_path ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(src_path ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_executable( ${project_name} ${src_path}/main.cpp)
+target_link_options(rumba PRIVATE -static-libgcc -static-libstdc++) 
 
 # <includes>
 function(include_dir dir)
