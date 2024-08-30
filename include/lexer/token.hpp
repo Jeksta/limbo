@@ -60,10 +60,12 @@ namespace lexer
         Colon,
         Period,
         Comma,
+        QuotationMark,
 
         //
         Identifier,
         Number,
+        String,
 
         // Keywords
         True,
@@ -73,10 +75,10 @@ namespace lexer
 
         Function,
         TypeOf,
-        Bool,
-        Int,
-        Double,
-        String,
+        BoolCast,
+        IntCast,
+        DoubleCast,
+        StringCast,
     };
 
     struct token

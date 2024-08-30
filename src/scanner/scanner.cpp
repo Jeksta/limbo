@@ -23,9 +23,8 @@ void scanner::run(const std::string &source_code)
         parser::any result(interpreter.interpret(tree.get_tree_root()));
 
         auto stop = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::print_debug_message("profiler", std::to_string(duration.count()) + " μs");
-
+        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start); 
+        std::print_debug_message("profiler", std::to_string(duration.count()) + " " + (char)230 + "s");
         // print result
         std::string response(std::visit(parser::variant_mapper{}, result));
         std::cout << "> " << response << "\n";

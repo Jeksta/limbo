@@ -8,6 +8,7 @@
 
 #include "token.hpp"
 #include "token_constants.hpp"
+#include "lexer_error.hpp"
 #include "string_utils.hpp"
 
 namespace lexer
@@ -16,6 +17,7 @@ namespace lexer
     bool is_identifier(const std::string &str);
     bool is_skippable(const std::string &str);
     bool is_keyword(const std::string &str);
+    bool is_string(const std::string &str);
     bool is_literal_divider(const std::string &str);
 
     /*
@@ -27,7 +29,9 @@ namespace lexer
 
     /*
      */
-    void divide_literal(std::vector<std::string> &buffer, std::string literal);
+    void divide_literal(std::vector<std::string> &buffer,
+                        std::string literal,
+                        const std::regex &regex);
 
     /*
      */

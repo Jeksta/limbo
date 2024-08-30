@@ -163,12 +163,17 @@ parser::unique_expr parser::syntax_tree::
         }
     }
 
+    if (this->match({lexer::String}))
+    {
+        return std::make_unique<parser::variant>(this->previouse().literal); 
+    }
+
     // calls
     if (this->match({lexer::TypeOf,
-                     lexer::Bool,
-                     lexer::Int,
-                     lexer::Double,
-                     lexer::String}))
+                     lexer::BoolCast,
+                     lexer::IntCast,
+                     lexer::DoubleCast,
+                     lexer::StringCast}))
     {
         return this->get_call();
     }
@@ -258,14 +263,7 @@ void parser::syntax_tree::
     parse()
 {
     this->current = 0;
-    try
-    {
-        this->expr = this->get_expression();
-    }
-    catch (const parser::error::parser_crash &e)
-    {
-        std::cerr << e.what() << '\n';
-    }
+    this->expr = this->get_expression();
 }
 
 const parser::expression *parser::syntax_tree::
