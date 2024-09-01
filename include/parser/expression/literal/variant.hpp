@@ -32,12 +32,12 @@ namespace parser
     };
 
     struct variant
-        : public literal<any>
+        : public literal<interpreter::any>
     {
-        variant(any value);
+        variant(interpreter::any value);
         ~variant();
 
-        parser::any accept(const interpreter::expression_visitor *visitor) const;
+        interpreter::any accept(const interpreter::expression_visitor *visitor) const;
         std::string to_string() const;
     };
 

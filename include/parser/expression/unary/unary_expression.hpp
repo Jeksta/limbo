@@ -4,7 +4,7 @@
 
 namespace parser
 {
-    class unary_expression
+    struct unary_expression
         : public expression
     {
         lexer::token unary_operator;
@@ -15,7 +15,7 @@ namespace parser
                          std::unique_ptr<expression> right);
         ~unary_expression();
 
-        parser::any accept(const interpreter::expression_visitor *visitor) const;
+        interpreter::any accept(const interpreter::expression_visitor *visitor) const;
         std::string to_string() const;
     };
 } // namespace parser

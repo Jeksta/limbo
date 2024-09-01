@@ -19,8 +19,8 @@ void scanner::run(const std::string &source_code)
         std::print_debug_message("parser", tree.to_ast());
 
         // interpret stuff
-        interpreter::interpreter interpreter;
-        parser::any result(interpreter.interpret(tree.get_tree_root()));
+        interpreter::interpreter interpreter("__global");
+        interpreter::any result(interpreter.interpret(tree.get_tree_root()));
 
         auto stop = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start); 

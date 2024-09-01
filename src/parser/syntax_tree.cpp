@@ -138,8 +138,22 @@ parser::unique_expr parser::syntax_tree::
 }
 
 parser::unique_expr parser::syntax_tree::
+    get_assignment()
+{
+    lexer::token identifier = this->previouse();
+    if (this->match({lexer::Equal}))
+    {
+        parser::unique_expr expr = this->get_expression();
+        return std::make_unique<parser::assign_expression>(identifier, std::move(expr));
+    }
+
+    return std::make_unique<parser::identifier>(identifier.literal); 
+}
+
+parser::unique_expr parser::syntax_tree::
     get_primary()
 {
+
     // int / double
     if (this->match({
             lexer::Number,
@@ -163,9 +177,10 @@ parser::unique_expr parser::syntax_tree::
         }
     }
 
+    // string
     if (this->match({lexer::String}))
     {
-        return std::make_unique<parser::variant>(this->previouse().literal); 
+        return std::make_unique<parser::variant>(this->previouse().literal);
     }
 
     // calls
@@ -176,6 +191,11 @@ parser::unique_expr parser::syntax_tree::
                      lexer::StringCast}))
     {
         return this->get_call();
+    }
+
+    if (this->match({lexer::Identifier}))
+    {
+        return this->get_assignment();
     }
 
     // grouping
@@ -195,6 +215,7 @@ parser::unique_expr parser::syntax_tree::
 {
     lexer::tt_vec comperator({
         lexer::ExclamationMark,
+        lexer::Plus,
         lexer::Dash,
     });
     if (this->match(comperator))

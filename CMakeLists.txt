@@ -35,6 +35,7 @@ list(APPEND include_dirs interpreter)
 list(APPEND include_dirs interpreter/error)
 list(APPEND include_dirs interpreter/logic)
 list(APPEND include_dirs interpreter/visitor)
+list(APPEND include_dirs storage)
 
 foreach(dir IN LISTS include_dirs)
     include_dir(${dir})

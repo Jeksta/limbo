@@ -12,7 +12,7 @@ parser::call_expression::
 {
 }
 
-parser::any parser::call_expression::
+interpreter::any parser::call_expression::
     accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);

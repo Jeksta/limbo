@@ -5,7 +5,6 @@ using namespace lexer::error;
 bool lexer::
     is_number(const std::string &str)
 {
-    // TODO
     char *p;
     strtod(str.c_str(), &p);
     return *p == 0;
