@@ -2,7 +2,7 @@
 
 using namespace scanner::error;
 
-void scanner::run(const std::string &source_code, short print_flags = 0x00)
+void scanner::run(const std::string &source_code, short print_flags)
 {
     try
     {
@@ -46,7 +46,7 @@ void scanner::run(const std::string &source_code, short print_flags = 0x00)
 /*
 REBL
  */
-void scanner::run_prompt()
+void scanner::run_prompt(short print_flags)
 {
     while (true)
     {
@@ -59,7 +59,7 @@ void scanner::run_prompt()
         {
             break;
         }
-        scanner::run(source_code, scanner::flag::PRINT_RESPONSE);
+        scanner::run(source_code, print_flags | scanner::flag::PRINT_RESPONSE);
     }
 }
 

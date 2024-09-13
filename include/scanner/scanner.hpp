@@ -24,14 +24,14 @@ namespace scanner
      *
      * @param source_code
      */
-    void run(const std::string &source_code, short print_flags);
+    void run(const std::string &source_code, short print_flags = 0x00);
 
     /**
      * @brief REBL
      *
      * @return
      */
-    void run_prompt();
+    void run_prompt(short print_flags = 0x00);
 
     /**
      * @brief Runs a file
