@@ -1,4 +1,3 @@
-#include <iostream>
 #include "scanner.hpp"
 
 int main(int argc, char *argv[])
@@ -9,7 +8,16 @@ int main(int argc, char *argv[])
         scanner::run_prompt();
         break;
     case 2:
-        scanner::run_file(argv[1]);
+        // TODO argparser
+        if (std::string(argv[1]) == "-d")
+        {
+            scanner::run_prompt(scanner::flag::PRINT_DEBUG);
+        }
+        else
+        {
+            scanner::run_file(argv[1]);
+        }
+        break;
 
     default:
         break;
