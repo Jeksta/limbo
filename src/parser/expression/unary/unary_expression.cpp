@@ -12,10 +12,10 @@ parser::unary_expression::
 {
 }
 
-parser::any parser::unary_expression::
+interpreter::any parser::unary_expression::
     accept(const interpreter::expression_visitor *visitor) const
 {
-    throw std::not_implemented();
+    return visitor->visit(this);
 }
 
 std::string parser::unary_expression::
@@ -28,5 +28,5 @@ std::string parser::unary_expression::
         unary_operator.literal,
         right_str,
     });
-    return std::parenthesize(str, " ", std::bracket::Round);
+    return std::parenthesize(str, " ", std::bracket::Square);
 }

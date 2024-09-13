@@ -1,9 +1,9 @@
 #include "stdlib.hpp"
 
 std::string interpreter::
-    type_of(const parser::any &value)
+    type_of(const interpreter::any &value)
 {
-    auto type = parser::overload{
+    auto type = interpreter::overload{
         [](bool value)
         {
             return "bool";
@@ -26,15 +26,15 @@ std::string interpreter::
 }
 
 bool interpreter::
-    bool_of(const parser::any &value)
+    bool_of(const interpreter::any &value)
 {
     return is_truthy(value);
 }
 
 int interpreter::
-    int_of(const parser::any &value)
+    int_of(const interpreter::any &value)
 {
-    auto type = parser::overload{
+    auto type = interpreter::overload{
         [](std::string value)
         {
             return std::stoi(value);
@@ -49,9 +49,9 @@ int interpreter::
 }
 
 double interpreter::
-    double_of(const parser::any &value)
+    double_of(const interpreter::any &value)
 {
-    auto type = parser::overload{
+    auto type = interpreter::overload{
         [](std::string value)
         {
             return std::stod(value);
@@ -66,9 +66,9 @@ double interpreter::
 }
 
 std::string interpreter::
-    string_of(const parser::any &value)
+    string_of(const interpreter::any &value)
 {
-    auto type = parser::overload{
+    auto type = interpreter::overload{
         [](std::string value)
         {
             return value;

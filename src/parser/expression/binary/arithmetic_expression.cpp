@@ -11,7 +11,7 @@ parser::arithmetic_expression::
 parser::arithmetic_expression::
     ~arithmetic_expression() {}
 
-parser::any parser::arithmetic_expression::
+interpreter::any parser::arithmetic_expression::
     accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);

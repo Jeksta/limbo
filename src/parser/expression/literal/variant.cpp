@@ -41,7 +41,7 @@ std::string parser::variant_mapper::operator()(std::string arg) const
 }
 
 parser::variant::
-    variant(parser::any value)
+    variant(interpreter::any value)
     : literal(value)
 {
 }
@@ -51,7 +51,7 @@ parser::variant::
 {
 }
 
-parser::any parser::variant::
+interpreter::any parser::variant::
     accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);

@@ -5,7 +5,6 @@ using namespace lexer::error;
 bool lexer::
     is_number(const std::string &str)
 {
-    // TODO
     char *p;
     strtod(str.c_str(), &p);
     return *p == 0;
@@ -109,7 +108,7 @@ void lexer::
     tokenize(std::vector<lexer::token> &buffer,
              const std::string &source_code)
 {
-    // seperate source by strings and whilespaces
+    // seperate source by strings and whitespaces
     std::vector<std::string> src{};
     lexer::divide_literal(src, source_code, string_divider_regex);
 

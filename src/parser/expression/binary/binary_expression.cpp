@@ -13,7 +13,7 @@ parser::binary_expression::
 {
 }
 
-parser::any parser::binary_expression::
+interpreter::any parser::binary_expression::
     accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);

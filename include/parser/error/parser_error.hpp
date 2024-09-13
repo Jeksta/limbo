@@ -9,5 +9,6 @@ namespace parser::error
     {
     public:
         parser_crash();
+        parser_crash(std::string message);
     };
 } // namespace parser
