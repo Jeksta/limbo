@@ -3,7 +3,7 @@
 #include <variant>
 #include <string>
 
-namespace parser
+namespace interpreter
 {
     template <class... Ts>
     struct overload : Ts...
@@ -16,4 +16,4 @@ namespace parser
 
     typedef std::variant<int, bool, double, std::string> any;
 
-} // namespace parser
+} // namespace interpreter

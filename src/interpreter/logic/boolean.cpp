@@ -1,9 +1,9 @@
 #include "boollib.hpp"
 
 bool interpreter::
-    is_truthy(const parser::any &value)
+    is_truthy(const interpreter::any &value)
 {
-    auto truthy = parser::overload{
+    auto truthy = interpreter::overload{
         [](bool value) -> bool
         {
             return value;

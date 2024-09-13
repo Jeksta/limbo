@@ -1,11 +1,10 @@
 #include "lexer.hpp"
 
-#include <exception>
+using namespace lexer::error;
 
 bool lexer::
     is_number(const std::string &str)
 {
-    // TODO
     char *p;
     strtod(str.c_str(), &p);
     return *p == 0;
@@ -30,6 +29,18 @@ bool lexer::
 }
 
 bool lexer::
+    is_string(const std::string &str)
+{
+    if (str.length() < 2)
+    {
+        return false;
+    }
+
+    return std::starts_with(str, string_delimiter) &&
+           std::ends_with(str, string_delimiter);
+}
+
+bool lexer::
     is_literal_divider(const std::string &str)
 {
     return lexer::literal_divider_map.find(str) != lexer::literal_divider_map.end();
@@ -45,7 +56,7 @@ lexer::token_type lexer::
 {
     if (lexer::is_skippable(literal))
     {
-        return lexer::token_type::Skippable;
+        return lexer::Skippable;
     }
 
     if (lexer::is_literal_divider(literal))
@@ -60,24 +71,28 @@ lexer::token_type lexer::
 
     if (lexer::is_number(literal))
     {
-        return lexer::token_type::Number;
+        return lexer::Number;
+    }
+
+    if (lexer::is_string(literal))
+    {
+        return lexer::String;
     }
 
     if (lexer::is_identifier(literal))
     {
-        return lexer::token_type::Identifier;
+        return lexer::Identifier;
     }
 
-    return lexer::token_type::Invalid;
+    return lexer::Invalid;
 }
 
-/*
- */
 void lexer::
     divide_literal(std::vector<std::string> &buffer,
-                   std::string literal)
+                   std::string literal,
+                   const std::regex &regex)
 {
-    std::regex_iterator<std::string::iterator> rit(literal.begin(), literal.end(), literal_divider_regex);
+    std::regex_iterator<std::string::iterator> rit(literal.begin(), literal.end(), regex);
     std::regex_iterator<std::string::iterator> rend;
 
     while (rit != rend)
@@ -93,26 +108,36 @@ void lexer::
     tokenize(std::vector<lexer::token> &buffer,
              const std::string &source_code)
 {
-    std::vector<std::string> src = std::split(source_code, " ");
+    // seperate source by strings and whitespaces
+    std::vector<std::string> src{};
+    lexer::divide_literal(src, source_code, string_divider_regex);
 
-    // divide strings like 4==4
-    std::vector<std::string> literals = std::vector<std::string>();
+    std::vector<std::string> literals{};
     for (const std::string &src_token : src)
     {
-        lexer::divide_literal(literals, src_token);
+        // skip strings
+        if (std::starts_with(src_token, string_delimiter))
+        {
+            literals.push_back(src_token);
+            continue;
+        }
+
+        // divide literals like 4==4 -> {4, ==, 4}
+        lexer::divide_literal(literals, src_token, literal_divider_regex);
     }
 
     // process literals
     for (const std::string &literal : literals)
     {
         lexer::token_type type = lexer::typeof_literal(literal);
+        std::string destringed_literal(std::remove_chars(literal, string_delimiter));
+        lexer::token token = lexer::token(type, destringed_literal, -1);
 
         if (type == lexer::token_type::Invalid)
         {
-            // TODO for now, do nothing
+            throw invalid_token(token);
         }
 
-        lexer::token token = lexer::token(type, literal, -1);
         buffer.push_back(token);
     }
 }

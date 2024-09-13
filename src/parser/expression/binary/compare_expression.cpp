@@ -11,7 +11,7 @@ parser::compare_expression::
 parser::compare_expression::
     ~compare_expression() {}
 
-parser::any parser::compare_expression::
+interpreter::any parser::compare_expression::
     accept(const interpreter::expression_visitor *visitor) const
 {
     return visitor->visit(this);

@@ -4,20 +4,18 @@
 
 namespace parser
 {
-
-    struct binary_expression
+    struct assign_expression
         : public expression
     {
-        unique_expr left;
-        lexer::token binary_operator;
+        lexer::token identifier;
         unique_expr right;
 
-        binary_expression(unique_expr left,
-                          lexer::token binary_operator,
+        assign_expression(lexer::token identifier,
                           unique_expr right);
-        ~binary_expression();
+        ~assign_expression();
 
         interpreter::any accept(const interpreter::expression_visitor *visitor) const;
         std::string to_string() const;
     };
+
 } // namespace parser

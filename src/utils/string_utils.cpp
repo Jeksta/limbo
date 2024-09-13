@@ -32,6 +32,29 @@ std::string std::
     return result + str.back();
 }
 
+bool std::
+    ends_with(const std::string_view &str, const std::string_view &suffix)
+{
+    return str.size() >= suffix.size() && str.compare(str.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+bool std::
+    starts_with(const std::string_view &str, const std::string_view &prefix)
+{
+    return str.size() >= prefix.size() && str.compare(0, prefix.size(), prefix) == 0;
+}
+
+std::string std::
+    remove_chars(std::string str, const std::string &chars)
+{
+    for (unsigned int i = 0; i < chars.length(); ++i)
+    {
+        str.erase(remove(str.begin(), str.end(), chars.at(i)), str.end());
+    }
+
+    return str;
+}
+
 std::string std::
     parenthesize(const std::vector<std::string> &str,
                  std::string delimiter,

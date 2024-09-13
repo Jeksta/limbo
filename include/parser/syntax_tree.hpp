@@ -6,14 +6,14 @@
 #include "any.hpp"
 #include "parser_error.hpp"
 #include "token.hpp"
-#include "expression.hpp"
-#include "literal.hpp"
 #include "variant.hpp"
+#include "identifier.hpp"
 #include "unary_expression.hpp"
 #include "binary_expression.hpp"
 #include "compare_expression.hpp"
 #include "arithmetic_expression.hpp"
 #include "call_expression.hpp"
+#include "assign_expression.hpp"
 
 namespace parser
 {
@@ -39,6 +39,7 @@ namespace parser
         // rules
         unique_expr get_numeric();
         unique_expr get_call();
+        unique_expr get_assignment();
         unique_expr get_primary();
         unique_expr get_unary();
         // binary rules

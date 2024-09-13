@@ -12,7 +12,7 @@ namespace parser
                               parser::unique_expr right);
         ~arithmetic_expression();
 
-        parser::any accept(const interpreter::expression_visitor *visitor) const;
+        interpreter::any accept(const interpreter::expression_visitor *visitor) const;
         std::string to_string() const;
     };
 

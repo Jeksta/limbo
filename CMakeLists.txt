@@ -12,6 +12,7 @@ set(includes_path ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(src_path ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 add_executable( ${project_name} ${src_path}/main.cpp)
+target_link_options(rumba PRIVATE -static-libgcc -static-libstdc++) 
 
 # <includes>
 function(include_dir dir)
@@ -22,6 +23,7 @@ endfunction()
     
 list(APPEND include_dirs utils)
 list(APPEND include_dirs scanner)
+list(APPEND include_dirs scanner/error)
 list(APPEND include_dirs lexer)
 list(APPEND include_dirs lexer/error)
 list(APPEND include_dirs parser)
@@ -34,6 +36,7 @@ list(APPEND include_dirs interpreter)
 list(APPEND include_dirs interpreter/error)
 list(APPEND include_dirs interpreter/logic)
 list(APPEND include_dirs interpreter/visitor)
+list(APPEND include_dirs storage)
 
 foreach(dir IN LISTS include_dirs)
     include_dir(${dir})
