@@ -23,6 +23,7 @@ endfunction()
     
 list(APPEND include_dirs utils)
 list(APPEND include_dirs scanner)
+list(APPEND include_dirs scanner/error)
 list(APPEND include_dirs lexer)
 list(APPEND include_dirs lexer/error)
 list(APPEND include_dirs parser)
