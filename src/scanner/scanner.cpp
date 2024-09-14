@@ -18,7 +18,8 @@ void scanner::run(const std::string &source_code, short print_flags)
 
         // interpret ast
         interpreter::interpreter interpreter("__global");
-        interpreter::any result(interpreter.interpret(tree.get_tree_root()));
+        interpreter.interpret(tree.get_tree_root());
+        interpreter::any result(interpreter.get_result());
 
         if (print_flags & scanner::flag::PRINT_DEBUG)
         {

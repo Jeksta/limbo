@@ -68,13 +68,15 @@ namespace lexer
         String,
 
         // Keywords
+        Null,
         True,
         False,
-        Condition,
-        Return,
 
-        Function,
+        // methodes
         TypeOf,
+        Output,
+
+        // cast methode
         BoolCast,
         IntCast,
         DoubleCast,

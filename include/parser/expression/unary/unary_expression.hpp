@@ -15,7 +15,7 @@ namespace parser
                          std::unique_ptr<expression> right);
         ~unary_expression();
 
-        interpreter::any accept(const interpreter::expression_visitor *visitor) const;
+        void accept(interpreter::expression_visitor *visitor) ;
         std::string to_string() const;
     };
 } // namespace parser

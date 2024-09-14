@@ -12,10 +12,10 @@ parser::assign_expression::
 {
 }
 
-interpreter::any parser::assign_expression::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::assign_expression::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::assign_expression::

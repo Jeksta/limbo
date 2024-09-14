@@ -11,10 +11,10 @@ parser::compare_expression::
 parser::compare_expression::
     ~compare_expression() {}
 
-interpreter::any parser::compare_expression::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::compare_expression::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::compare_expression::

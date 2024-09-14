@@ -11,6 +11,7 @@ namespace parser
         virtual std::string operator()(bool arg) const = 0;
         virtual std::string operator()(double arg) const = 0;
         virtual std::string operator()(std::string arg) const = 0;
+        virtual std::string operator()(std::monostate arg) const = 0;
     };
 
     struct variant_ast_printer
@@ -20,6 +21,7 @@ namespace parser
         std::string operator()(bool arg) const;
         std::string operator()(double arg) const;
         std::string operator()(std::string arg) const;
+        std::string operator()(std::monostate arg) const;
     };
 
     struct variant_mapper
@@ -29,6 +31,7 @@ namespace parser
         std::string operator()(bool arg) const;
         std::string operator()(double arg) const;
         std::string operator()(std::string arg) const;
+        std::string operator()(std::monostate arg) const;
     };
 
     struct variant
@@ -37,7 +40,7 @@ namespace parser
         variant(interpreter::any value);
         ~variant();
 
-        interpreter::any accept(const interpreter::expression_visitor *visitor) const;
+        void accept(interpreter::expression_visitor *visitor);
         std::string to_string() const;
     };
 

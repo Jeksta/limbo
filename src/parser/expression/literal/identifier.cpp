@@ -11,10 +11,10 @@ parser::identifier::
 {
 }
 
-interpreter::any parser::identifier::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::identifier::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::identifier::

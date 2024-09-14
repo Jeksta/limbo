@@ -23,62 +23,89 @@ interpreter::interpreter::
 }
 
 interpreter::any interpreter::interpreter::
-    evaluate(const parser::expression *expr) const
+    evaluate(parser::expression *expr)
 {
-    return expr->accept(this);
+    expr->accept(this);
+    return result;
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::variant *variant) const
+void interpreter::interpreter::
+    visit(const parser::variant *variant)
 {
-    return variant->value;
+    result = variant->value;
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::identifier *identifier) const
+void interpreter::interpreter::
+    visit(const parser::identifier *identifier)
 {
-    return runtime_environment.get_variable(current_scope, identifier->value);
+    result = runtime_environment.get_variable(current_scope, identifier->value);
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::unary_expression *unary) const
+void interpreter::interpreter::
+    visit(const parser::unary_expression *unary)
 {
     any right(this->evaluate(unary->right.get()));
+
     const lexer::token token = unary->unary_operator;
 
     auto unary_visitor = overload{
         [&token](auto &&right) -> any
         {
-            return right * -1;
+            switch (token.type)
+            {
+            case lexer::ExclamationMark:
+                return !is_truthy(right);
+            case lexer::Dash:
+                return right * -1;
+
+            default:
+                throw unsupported_operator(token.literal, type_of(right), type_of(right));
+            }
         },
         [&token](std::string right) -> any
         {
             throw unsupported_operator(token.literal, type_of(right), type_of(right));
+        },
+        [&token](std::monostate right) -> any
+        {
+            switch (token.type)
+            {
+            case lexer::ExclamationMark:
+                return !is_truthy(right);
+
+            default:
+                throw unsupported_operator(token.literal, type_of(right), type_of(right));
+            }
         },
     };
 
     switch (token.type)
     {
     case lexer::ExclamationMark:
-        return !is_truthy(right);
+        result = !is_truthy(right);
+        break;
+
     case lexer::Plus:
-        return right;
+        result = right;
+        break;
+
     case lexer::Dash:
-        return std::visit(unary_visitor, right);
+        result = std::visit(unary_visitor, right);
+        break;
 
     default:
         throw unsupported_operator(token.literal, type_of(right), type_of(right));
     }
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::binary_expression *binary) const
+void interpreter::interpreter::
+    visit(const parser::binary_expression *binary)
 {
     throw error::runtime_crash("No fallback for binary expression");
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::arithmetic_expression *arithmetic) const
+void interpreter::interpreter::
+    visit(const parser::arithmetic_expression *arithmetic)
 {
     any left(this->evaluate(arithmetic->left.get()));
     any right(this->evaluate(arithmetic->right.get()));
@@ -86,6 +113,15 @@ interpreter::any interpreter::interpreter::
     const lexer::token &token = arithmetic->binary_operator;
 
     auto arith_visitor = overload{
+        [&token](std::monostate left, std::string right) -> any
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::string right, std::monostate left) -> any
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        // string
         [&token](auto &&left, std::string right) -> any
         {
             throw unsupported_operator(token.literal, type_of(left), type_of(right));
@@ -104,6 +140,19 @@ interpreter::any interpreter::interpreter::
             default:
                 throw unsupported_operator(token.literal, type_of(left), type_of(right));
             }
+        },
+        // null
+        [&token](auto &&left, std::monostate right) -> any
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::monostate left, auto &&right) -> any
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::monostate left, std::monostate right) -> any
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
         },
         [&token](auto &&left, auto &&right) -> any
         {
@@ -129,18 +178,28 @@ interpreter::any interpreter::interpreter::
             }
         },
     };
-    return std::visit(arith_visitor, left, right);
+
+    result = std::visit(arith_visitor, left, right);
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::compare_expression *compare) const
+void interpreter::interpreter::
+    visit(const parser::compare_expression *compare)
 {
     any left(this->evaluate(compare->left.get()));
     any right(this->evaluate(compare->right.get()));
 
     const lexer::token &token = compare->binary_operator;
 
-    auto o = overload{
+    auto compare_override = overload{
+        [&token](std::monostate left, std::string right) -> bool
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::string right, std::monostate left) -> bool
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        // string
         [&token](auto &&left, std::string right) -> bool
         {
             throw unsupported_operator(token.literal, type_of(left), type_of(right));
@@ -150,6 +209,29 @@ interpreter::any interpreter::interpreter::
             throw unsupported_operator(token.literal, type_of(left), type_of(right));
         },
         [&token](std::string left, std::string right) -> bool
+        {
+            switch (token.type)
+            {
+            case lexer::EqualEqual:
+                return left == right;
+
+            case lexer::ExclamationMarkEqual:
+                return left != right;
+
+            default:
+                throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            }
+        },
+        // null
+        [&token](auto &&left, std::monostate right) -> bool
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::monostate left, auto &&right) -> bool
+        {
+            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+        },
+        [&token](std::monostate left, std::monostate right) -> bool
         {
             switch (token.type)
             {
@@ -190,11 +272,12 @@ interpreter::any interpreter::interpreter::
             }
         },
     };
-    return std::visit(o, left, right);
+
+    result = std::visit(compare_override, left, right);
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::call_expression *call) const
+void interpreter::interpreter::
+    visit(const parser::call_expression *call)
 {
     any expr(this->evaluate(call->parameter.get()));
 
@@ -202,36 +285,53 @@ interpreter::any interpreter::interpreter::
     switch (id.type)
     {
     case lexer::TypeOf:
-        return type_of(expr);
+        result = type_of(expr);
+        break;
+
+    case lexer::Output:
+        print(expr);
+        result = std::monostate();
+        break;
 
     case lexer::BoolCast:
-        return bool_of(expr);
+        result = bool_of(expr);
+        break;
 
     case lexer::IntCast:
-        return int_of(expr);
+        result = int_of(expr);
+        break;
 
     case lexer::DoubleCast:
-        return double_of(expr);
+        result = double_of(expr);
+        break;
 
     case lexer::StringCast:
-        return string_of(expr);
-    }
+        result = string_of(expr);
+        break;
 
-    throw runtime_crash("unknown call");
+    default:
+        throw runtime_crash("unknown call");
+    }
 }
 
-interpreter::any interpreter::interpreter::
-    visit(const parser::assign_expression *assignment) const
+void interpreter::interpreter::
+    visit(const parser::assign_expression *assignment)
 {
     std::string id(assignment->identifier.literal);
     any value(this->evaluate(assignment->right.get()));
 
     runtime_environment.set_variable(current_scope, id, value);
-    return value;
+    result = value;
+}
+
+void interpreter::interpreter::
+    interpret(parser::expression *expr)
+{
+    this->evaluate(expr);
 }
 
 interpreter::any interpreter::interpreter::
-    interpret(const parser::expression *expr) const
+    get_result() const
 {
-    return this->evaluate(expr);
+    return this->result;
 }

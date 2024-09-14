@@ -12,10 +12,10 @@ parser::unary_expression::
 {
 }
 
-interpreter::any parser::unary_expression::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::unary_expression::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::unary_expression::

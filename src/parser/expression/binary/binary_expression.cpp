@@ -13,10 +13,10 @@ parser::binary_expression::
 {
 }
 
-interpreter::any parser::binary_expression::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::binary_expression::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::binary_expression::

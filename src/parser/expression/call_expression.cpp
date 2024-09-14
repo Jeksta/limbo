@@ -12,10 +12,10 @@ parser::call_expression::
 {
 }
 
-interpreter::any parser::call_expression::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::call_expression::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::call_expression::
