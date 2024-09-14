@@ -225,11 +225,31 @@ void interpreter::interpreter::
         // null
         [&token](auto &&left, std::monostate right) -> bool
         {
-            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            switch (token.type)
+            {
+            case lexer::EqualEqual:
+                return false;
+
+            case lexer::ExclamationMarkEqual:
+                return true;
+
+            default:
+                throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            }
         },
         [&token](std::monostate left, auto &&right) -> bool
         {
-            throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            switch (token.type)
+            {
+            case lexer::EqualEqual:
+                return false;
+
+            case lexer::ExclamationMarkEqual:
+                return true;
+
+            default:
+                throw unsupported_operator(token.literal, type_of(left), type_of(right));
+            }
         },
         [&token](std::monostate left, std::monostate right) -> bool
         {
