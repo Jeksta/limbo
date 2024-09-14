@@ -70,7 +70,7 @@ namespace parser
 
         void parse();
 
-        const expression *get_tree_root();
+        expression *get_tree_root();
 
         std::string to_ast() const;
     };

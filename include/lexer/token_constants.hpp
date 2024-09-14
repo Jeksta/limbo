@@ -8,15 +8,16 @@ namespace lexer
 {
     const static std::unordered_map<std::string, token_type> keyword_token_map{
 
-        // Keywords
+        // types
+        {"null", Null},
         {"true", True},
         {"false", False},
-        {"if", Condition},
-        {"return", Return},
 
         // methods
-        {"func", Function},
         {"type_of", TypeOf},
+        {"print", Output},
+
+        // cast methode
         {"bool", BoolCast},
         {"int", IntCast},
         {"double", DoubleCast},

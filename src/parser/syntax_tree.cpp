@@ -55,9 +55,6 @@ void parser::syntax_tree::
     {
         switch (this->peek().type)
         {
-        case lexer::Condition:
-            return;
-
         default:
             this->advance();
         }
@@ -134,7 +131,7 @@ parser::unique_expr parser::syntax_tree::
         return std::make_unique<parser::call_expression>(identifier, std::move(expr));
     }
 
-    throw parser_crash();
+    throw parser_crash(identifier.literal + " call is missing opening brackets");
 }
 
 parser::unique_expr parser::syntax_tree::
@@ -147,12 +144,19 @@ parser::unique_expr parser::syntax_tree::
         return std::make_unique<parser::assign_expression>(identifier, std::move(expr));
     }
 
-    return std::make_unique<parser::identifier>(identifier.literal); 
+    return std::make_unique<parser::identifier>(identifier.literal);
 }
 
 parser::unique_expr parser::syntax_tree::
     get_primary()
 {
+    // null
+    if (this->match({
+            lexer::Null,
+        }))
+    {
+        return std::make_unique<parser::variant>(std::monostate());
+    }
 
     // int / double
     if (this->match({
@@ -185,6 +189,7 @@ parser::unique_expr parser::syntax_tree::
 
     // calls
     if (this->match({lexer::TypeOf,
+                     lexer::Output,
                      lexer::BoolCast,
                      lexer::IntCast,
                      lexer::DoubleCast,
@@ -287,7 +292,7 @@ void parser::syntax_tree::
     this->expr = this->get_expression();
 }
 
-const parser::expression *parser::syntax_tree::
+parser::expression *parser::syntax_tree::
     get_tree_root()
 {
     return expr.get();

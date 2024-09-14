@@ -12,7 +12,7 @@ interpreter::error::runtime_crash::
 
 interpreter::error::unsupported_operator::
     unsupported_operator(std::string op, std::string ltype, std::string rtype)
-    : runtime_crash("unsupported operator '" + op + "' for ltype : rtype -> '" + ltype + "' : '" + rtype + "'")
+    : runtime_crash("unsupported operator '" + op + "' for left type : right type -> '" + ltype + "' : '" + rtype + "'")
 {
 }
 
