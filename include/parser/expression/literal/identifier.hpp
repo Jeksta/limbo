@@ -10,7 +10,7 @@ namespace parser
         identifier(std::string name);
         ~identifier();
 
-        interpreter::any accept(const interpreter::expression_visitor *visitor) const;
+        void accept(interpreter::expression_visitor *visitor);
         std::string to_string() const;
     };
 

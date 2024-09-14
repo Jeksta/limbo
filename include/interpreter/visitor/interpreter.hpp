@@ -31,28 +31,28 @@ namespace interpreter
         : public expression_visitor
     {
         std::string current_scope;
+        any result;
         storage::runtime_environment &runtime_environment;
 
     private:
-        any evaluate(const parser::expression *expr) const;
+        any evaluate(parser::expression *expr);
 
     public:
         interpreter(std::string scope);
         ~interpreter();
 
-        any visit(const parser::variant *variant) const;
-        any visit(const parser::identifier *identifier) const;
-        
-        any visit(const parser::unary_expression *unary) const;
+        void visit(const parser::variant *variant);
+        void visit(const parser::identifier *identifier);
+        void visit(const parser::unary_expression *unary);
+        void visit(const parser::binary_expression *binary);
+        void visit(const parser::compare_expression *compare);
+        void visit(const parser::arithmetic_expression *arithmetic);
+        void visit(const parser::call_expression *call);
+        void visit(const parser::assign_expression *assign);
 
-        any visit(const parser::binary_expression *binary) const;
-        any visit(const parser::compare_expression *compare) const;
-        any visit(const parser::arithmetic_expression *arithmetic) const;
+        void interpret(parser::expression *expr);
 
-        any visit(const parser::call_expression *call) const;
-        any visit(const parser::assign_expression *assign) const;
-
-        any interpret(const parser::expression *expr) const;
+        any get_result() const;
     };
 
 } // namespace interpreter

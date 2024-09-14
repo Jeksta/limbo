@@ -11,10 +11,10 @@ parser::arithmetic_expression::
 parser::arithmetic_expression::
     ~arithmetic_expression() {}
 
-interpreter::any parser::arithmetic_expression::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::arithmetic_expression::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::arithmetic_expression::

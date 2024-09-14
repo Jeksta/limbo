@@ -20,6 +20,11 @@ bool interpreter::
         {
             return value.size() > 0;
         },
+        [](std::monostate value) -> bool
+        {
+            return false;
+        },
+
     };
 
     return std::visit(truthy, value);

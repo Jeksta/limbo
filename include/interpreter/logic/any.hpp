@@ -14,6 +14,6 @@ namespace interpreter
     template <class... Ts>
     overload(Ts...) -> overload<Ts...>;
 
-    typedef std::variant<int, bool, double, std::string> any;
+    typedef std::variant<int, bool, double, std::string, std::monostate> any;
 
 } // namespace interpreter

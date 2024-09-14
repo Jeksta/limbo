@@ -20,6 +20,12 @@ std::string parser::variant_ast_printer::operator()(std::string arg) const
     return std::parenthesize({"string variant", arg}, " ", std::bracket::Round);
 }
 
+std::string parser::variant_ast_printer::operator()(std::monostate arg) const
+{
+    return std::parenthesize({"null"}, " ", std::bracket::Round);
+}
+
+
 std::string parser::variant_mapper::operator()(int arg) const
 {
     return std::to_string(arg);
@@ -40,6 +46,11 @@ std::string parser::variant_mapper::operator()(std::string arg) const
     return arg;
 }
 
+std::string parser::variant_mapper::operator()(std::monostate arg) const
+{
+    return "null";
+}
+
 parser::variant::
     variant(interpreter::any value)
     : literal(value)
@@ -51,10 +62,10 @@ parser::variant::
 {
 }
 
-interpreter::any parser::variant::
-    accept(const interpreter::expression_visitor *visitor) const
+void parser::variant::
+    accept(interpreter::expression_visitor *visitor)
 {
-    return visitor->visit(this);
+    visitor->visit(this);
 }
 
 std::string parser::variant::

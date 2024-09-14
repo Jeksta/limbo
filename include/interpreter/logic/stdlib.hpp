@@ -1,6 +1,7 @@
 #pragma once
 
-#include "any.hpp"
+#include <iostream>
+#include "error.hpp"
 #include "boollib.hpp"
 
 namespace interpreter
@@ -11,4 +12,6 @@ namespace interpreter
     int int_of(const interpreter::any &value);
     double double_of(const interpreter::any &value);
     std::string string_of(const interpreter::any &value);
+
+    void print(const interpreter::any &value);
 } // namespace interpreter
