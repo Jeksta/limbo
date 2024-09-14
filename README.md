@@ -9,11 +9,18 @@ An interpreter written in C++ im working on in my spare time
 | `int( expression )` | parses an expression into an integer |
 | `double( expression )` | parses an expression into a double |
 | `string( expression )` | parses an expression into a string |
+| `print( expression )` | prints an expression |
+
+## Datatypes
+- bool
+- int
+- double
+- string
+- null
 
 ## Implemented operators
 - Equality ( "==" | "!=" )
 - Comparison ( "<" | "<=" | ">" | ">=" )
 - Arithmetic ( "+" | "-" | "*" | "/" )
-
-## Known Issues 
-- Everything else
+- Unary ( "!" | "-" | "+" )
+- Assignemnt ( "=" )
