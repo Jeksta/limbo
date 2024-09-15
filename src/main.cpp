@@ -1,7 +1,18 @@
 #include "scanner.hpp"
+#include "argparse.hpp"
 
 int main(int argc, char *argv[])
 {
+    parser::argparse arg_parser(
+        "Test",
+        {
+            {"-d", parser::arg_type::Bool, parser::arg_count::None, "print debug messages after every instruction"},
+            {"-help", parser::arg_type::Bool, parser::arg_count::None, "print debug messages after every instruction"},
+        });
+
+    arg_parser.parse(argc, argv);
+    auto args = arg_parser.get_args();
+
     switch (argc)
     {
     case 1:
